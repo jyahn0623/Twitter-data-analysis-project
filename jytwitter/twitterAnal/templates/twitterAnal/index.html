@@ -1,0 +1,41 @@
+<html>
+<head>
+ <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
+ <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+ <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+ <script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
+    <title>Twitter Analysis</title>
+</head>
+<body>
+    <div id="datas"></div>
+    <button onclick="test({{datas}});">동기화</button>
+
+<script src="http://code.jquery.com/jquery-2.0.0.js"></script>  
+<script>
+function test(a){
+    $("#datas").empty();
+    menu_list = [];
+    datas = {};
+    var menu_list = Object.keys(a); // json 객체의 길이 구하기 Object.keys(json).length;
+    // length를 안 붙이면 해당 키들의 값만 배열로 반환
+    
+    // key, value 값 얻어내기
+    for ( var menu in a){
+        //alert(a[menu]);
+        datas = a;
+        datas['y'] = "데이터 수집가 안주영";
+    }
+    
+    Morris.Bar({
+        element: 'datas',
+        data: [
+            datas,
+        ],
+        xkey: 'y',
+        ykeys: menu_list,
+        labels: menu_list
+    });
+}
+</script>
+</body>
+</html>
