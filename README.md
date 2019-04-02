@@ -118,6 +118,8 @@ def main(request):
 # html에서 js로 json 객체 넘기기
 render를 통해 html에 json 객체를 넘겨 주었고, 해당 객체를 js에 넘겨 morris.js 라이브러리를 통해 표를 그려보자.
 
+
+
 <html>
 <head>
  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
@@ -161,3 +163,5 @@ function test(a){
 </script>
 </body>
 </html>
+
+# 코드는 대부분 주석에 설명해 두었음.

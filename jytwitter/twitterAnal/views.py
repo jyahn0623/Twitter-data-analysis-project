@@ -73,11 +73,14 @@ def init():
     auth.set_access_token(a_key, a_s_key)
     api = tweepy.API(auth)
     twit_stream = Stream(auth, listener())
-    twit_stream.filter(languages=['ko',], track=track_words)
+    twit_stream.filter(languages=['ko',], track=track_words, is_async=True)
 
+init()
 def main(request):   
-    init()
     return render(request, 'twitterAnal/index.html', {
         'datas' : json.dumps(datas, ensure_ascii=False),
     })
 
+def getData(request):
+    data = json.dumps(datas, ensure_ascii=False)
+    return HttpResponse(data, content_type='json/application')

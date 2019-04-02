@@ -1,35 +1,71 @@
+{% load static %}
 <html>
 <head>
+<!--Morris, jquery, bootstrap cdn import-->
  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
  <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
  <script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
     <title>Twitter Analysis</title>
 </head>
 <body>
     <div id="datas"></div>
-    <button onclick="test({{datas}});">동기화</button>
+    <div>10초 간격으로 갱신</div>
+    <button class="btn btn-info" onclick="getData();">수동 갱신</button>
 
 <script src="http://code.jquery.com/jquery-2.0.0.js"></script>  
 <script>
-function test(a){
-    $("#datas").empty();
-    menu_list = [];
-    datas = {};
-    var menu_list = Object.keys(a); // json 객체의 길이 구하기 Object.keys(json).length;
+$(document).ready(function(){
+    getData();
+})
+// 각각 데이터를 담아 둘 변수
+var menu_list = [];
+var datas = {};
+var datas1 = {};
+
+// 10초마다 갱신
+setInterval(getData, 10000);
+
+// ajax로 데이터를 받아와 처리
+function getData(){
+    $.ajax({
+        url : "{% url 'JY:getData' %}",
+        type : "GET",
+        data : {
+            'csrfmiddlewaretoken': '{{ csrf_token }}',
+        },
+        success: function(res)
+        {
+            datas = res;
+            Data_to(datas);
+        }
+    })
+}
+
+// 받아온 데이터 가공
+function Data_to(a)
+{
+    menu_list = Object.keys(a); 
+    // json 객체의 길이 구하기 Object.keys(json).length;
     // length를 안 붙이면 해당 키들의 값만 배열로 반환
     
     // key, value 값 얻어내기
-    for ( var menu in a){
-        //alert(a[menu]);
-        datas = a;
-        datas['y'] = "데이터 수집가 안주영";
-    }
-    
+    //for ( var menu in a){
+    //   //alert(a[menu]);
+    //}
+    datas1 = a;
+    datas1['y'] = "데이터 수집가 안주영";
+    showGraph();
+}
+
+// 가공한 데이터 그리기
+function showGraph(){
+    $("#datas").empty();
     Morris.Bar({
         element: 'datas',
         data: [
-            datas,
+            datas1,
         ],
         xkey: 'y',
         ykeys: menu_list,
