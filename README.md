@@ -165,3 +165,45 @@ function test(a){
 </html>
 
 # 코드는 대부분 주석에 설명해 두었음.
+
+
+# 2019-04-03
+# 일별 파일 초기화를 위해 djang-crontab 사용
+
+# django-crontab 설치
+pip install django-crontab
+
+# settings.py의 INSTALLED_APPS에
+'django_crontab' 추가
+
+# 해당 app의 cron.py 생성 및 함수 생성
+cron.py를 만들지 않고, 사용하고자 함수의 path만 설정을 잘 해주면 됨.
+
+# settings.py에서 CRONJOBS에 작업 추가
+CRONJOBS = [
+    ("* * * * *", "수행할 명령어 형태"),
+    // 분(0~59) 시(0-23) 일(1-31) 월(1-12) 요일(0-6) 0 Mon 6 Sun
+    Ex) ("5 * * * *", "twitterAnal.views.def'), 
+]
+# python manage.py crontab add로 모두 실행 가능, remove로 모두 제거 가능, show를 통해 모두 보기 가능
+
+#참고 자료
+3. 주기별 예제
+3.1. 매분 실행
+# 매분 test.sh 실행
+* * * * * /home/script/test.sh
+3.2. 특정 시간 실행
+# 매주 금요일 오전 5시 45분에 test.sh 를 실행
+45 5 * * 5 /home/script/test.sh
+3.3. 반복 실행
+# 매일 매시간 0분, 20분, 40분에 test.sh 를 실행
+0,20,40 * * * * /home/script/test.sh
+3.4. 범위 실행
+# 매일 1시 0분부터 30분까지 매분 tesh.sh 를 실행
+0-30 1 * * * /home/script/test.sh
+3.5. 간격 실행
+# 매 10분마다 test.sh 를 실행
+*/10 * * * * /home/script/test.sh
+3.6. 조금 복잡하게 실행
+# 5일에서 6일까지 2시,3시,4시에 매 10분마다 test.sh 를 실행
+*/10 2,3,4 5-6 * * /home/script/test.sh
