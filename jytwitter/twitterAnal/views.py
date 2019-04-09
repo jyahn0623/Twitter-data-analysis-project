@@ -2,7 +2,7 @@ from django.shortcuts import render, HttpResponse
 from tweepy import Stream, OAuthHandler
 import tweepy
 from tweepy.streaming import StreamListener
-import json, csv
+import json, csv, os
 from datetime import datetime
 import pandas as pd
 
@@ -71,9 +71,10 @@ def main(request):
     return render(request, 'twitterAnal/index.html')
 
 def getData(request):
+    path = os.getcwd()
     datas = {
-        'data_days' : json.loads(open(r'C:\Users\PD3\Desktop\twitter-analysis\jytwitter\twitterAnal\요일별.json', 'r').read()),
-        'data_times' : json.loads(open(r'C:\Users\PD3\Desktop\twitter-analysis\jytwitter\twitterAnal\시간대별.json', 'r').read()),
-        'data_types' : json.loads(open(r'C:\Users\PD3\Desktop\twitter-analysis\jytwitter\twitterAnal\종류별.json', 'r').read())
+        'data_days' : json.loads(open(path+'/twitterAnal/요일별.json', 'r').read()),
+        'data_times' : json.loads(open(path+'/twitterAnal/시간대별.json', 'r').read()),
+        'data_types' : json.loads(open(path+'/twitterAnal/종류별.json', 'r').read())
     }
     return HttpResponse(json.dumps(datas), content_type='application/json')

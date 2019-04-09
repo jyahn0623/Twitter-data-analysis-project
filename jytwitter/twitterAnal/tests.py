@@ -1,7 +1,6 @@
 import pandas as pd
 from datetime import datetime
-import time, json
-
+import time, json, os
 
 files = [
     'd20190401',
@@ -99,4 +98,4 @@ _f.write(json.dumps(dic))
 #for f in files:
     #data = test(f)
     #print(data)
-    
+

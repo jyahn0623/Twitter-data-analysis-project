@@ -22,15 +22,24 @@
     </div>
     <hr>
     <div class="col-sm-6">
-        <h2>시간대별 관심도</h2>
+        <h2>시간대별 관심도(메뉴별)</h2>
         <div id="data3"></div>
     </div>
     <hr>
     <div class="col-sm-6">
-        <h2>요일별 관심도</h2>
+        <h2>요일별 관심도(메뉴별)</h2>
         <div id="data4"></div>
     </div>
     <hr>
+    <div class="col-sm-6">
+        <h2>시간대별 관심도(종류별)</h2>
+        <div id="data3"></div>
+    </div>
+    <hr>
+    <div class="col-sm-6">
+        <h2>요일별 관심도(종류별)</h2>
+        <div id="data4"></div>
+    </div>
 
 <div id="data"></div>
 
@@ -62,7 +71,7 @@ function getData(){
             data_time = res.data_times;
             data_day = res.data_days;
             a = Object.keys(data_time.data);
-            $("#data").html(JSON.stringify(data_time));
+            $("#data").html(JSON.stringify(res));
             DrawGraph(res);
         },
         error : function(res){
@@ -85,13 +94,13 @@ function DrawGraph(res)
         value.push(tmp_list[0]+tmp_list[1]+tmp_list[2]);
     }
     data = [
-        { y: '2018-04-01', '언급량' : value[0]},
-        { y: '2018-04-02', '언급량' : value[1]},
-        { y: '2018-04-03', '언급량' : value[2]},
-        { y: '2018-04-04', '언급량' : value[3]},
-        { y: '2018-04-05', '언급량' : value[4]},
-        { y: '2018-04-06', '언급량' : value[5]},
-        { y: '2018-04-07', '언급량' : value[6]}
+        { y: '2019-04-01', '언급량' : value[0]},
+        { y: '2019-04-02', '언급량' : value[1]},
+        { y: '2019-04-03', '언급량' : value[2]},
+        { y: '2019-04-04', '언급량' : value[3]},
+        { y: '2019-04-05', '언급량' : value[4]},
+        { y: '2019-04-06', '언급량' : value[5]},
+        { y: '2019-04-07', '언급량' : value[6]}
     ];
     config.data = data;
     config.ykeys = ['언급량'];
@@ -102,13 +111,13 @@ function DrawGraph(res)
 
     //종류별 데이터
     data = [
-        { y: '2018-04-01', '한식' : res.data_types['4-1'][1], '중식' : res.data_types['4-1'][0], '일식': res.data_types['4-1'][2]},
-        { y: '2018-04-02', '한식' : res.data_types['4-2'][1], '중식' : res.data_types['4-2'][0], '일식': res.data_types['4-2'][2]},
-        { y: '2018-04-03', '한식' : res.data_types['4-3'][1], '중식' : res.data_types['4-3'][0], '일식': res.data_types['4-3'][2]},
-        { 'y': '2018-04-04', '한식' : res.data_types['4-4'][1], '중식' : res.data_types['4-4'][0], '일식': res.data_types['4-4'][2]},
-        { y: '2018-04-05', '한식' : res.data_types['4-5'][1], '중식' : res.data_types['4-5'][0], '일식': res.data_types['4-5'][2]},
-        { y: '2018-04-06', '한식' : res.data_types['4-6'][1], '중식' : res.data_types['4-6'][0], '일식': res.data_types['4-6'][2]},
-        { y: '2018-04-07', '한식' : res.data_types['4-7'][1], '중식' : res.data_types['4-7'][0], '일식': res.data_types['4-7'][2]}
+        { y: '2019-04-01', '한식' : res.data_types['4-1'][1], '중식' : res.data_types['4-1'][0], '일식': res.data_types['4-1'][2]},
+        { y: '2019-04-02', '한식' : res.data_types['4-2'][1], '중식' : res.data_types['4-2'][0], '일식': res.data_types['4-2'][2]},
+        { y: '2019-04-03', '한식' : res.data_types['4-3'][1], '중식' : res.data_types['4-3'][0], '일식': res.data_types['4-3'][2]},
+        { y: '2019-04-04', '한식' : res.data_types['4-4'][1], '중식' : res.data_types['4-4'][0], '일식': res.data_types['4-4'][2]},
+        { y: '2019-04-05', '한식' : res.data_types['4-5'][1], '중식' : res.data_types['4-5'][0], '일식': res.data_types['4-5'][2]},
+        { y: '2019-04-06', '한식' : res.data_types['4-6'][1], '중식' : res.data_types['4-6'][0], '일식': res.data_types['4-6'][2]},
+        { y: '2019-04-07', '한식' : res.data_types['4-7'][1], '중식' : res.data_types['4-7'][0], '일식': res.data_types['4-7'][2]}
     ];
     config.data = data;
     config.ykeys = ['한식', '중식', '일식'];
@@ -119,34 +128,38 @@ function DrawGraph(res)
     //시간대별
     col = []
     d_list = []
+    var num = 0;
+    col = Object.keys(data_time['data'][0]);
     for ( var a in data_time['data']){
-        data_time['data'][a]['hours'] = "10:00";
-        data = JSON.stringify(data_time['data'][a]);
+        data_time['data'][a]['hours'] = num++;
+        data = data_time['data'][a];
         d_list.push(data);
     }
-    alert(Object.keys(data_time['data'][0]));
-
     // labels, keys setting
-    col = Object.keys(data_time['data'][0]);
     config.labels = col;
     config.ykeys = col;
-    config.xkey = 'hours';
-    config.parseTime = false;
-    config.data = d_list;
+    config.xkey = "hours";
     config.xLabels = "hour";
+    config.parseTime = false;
     config.element = 'data3';
+    config.data = d_list;
     Morris.Line(config);
 
     //요일별
-    /*
+    d_list = []
+    day = ['월', '화', '수', '목', '금', '토', '일'];
+    num = 0
+    for ( var a in data_day['data']){
+        data_day['data'][a]['day'] = day[num++];
+        data = data_day['data'][a];
+        d_list.push(data);
+    }
+    config.xkey = "day";
     config.xLabels = "day";
-    config.xLabelFormat = function (x){
-        day = ['일', '월', '화', '수', '목', '금', '토'];
-        return day[new Date(x).getDay()];
-    };
+    config.data = d_list;
     config.element = 'data4';
     Morris.Line(config);
-    */
+
 }
 </script>
 </body>
