@@ -10,24 +10,44 @@
     <title>Twitter Analysis</title>
 </head>
 <body>
-    <div id="datas"></div>
-    <div>10초 간격으로 갱신</div>
-    <button class="btn btn-info" onclick="getData();">수동 갱신</button>
+<button class="btn btn-danger" onclick="getData();">Click</button>
+    <div>
+        <h2>총 언급량</h2>
+        <div id="data1"></div>
+    </div>
+    <hr>
+    <div>
+        <h2>종류별 데이터</h2>
+        <div id="data2"></div>
+    </div>
+    <hr>
+    <div>
+        <h2>시간대별 관심도</h2>
+        <div id="data3"></div>
+    </div>
+    <hr>
+    <div>
+        <h2>요일별 관심도</h2>
+        <div id="data4"></div>
+    </div>
+    <hr>
 
 <script src="http://code.jquery.com/jquery-2.0.0.js"></script>  
 <script>
 $(document).ready(function(){
-    getData();
+    /*
+    Morris.Line({
+        element: 'data1',
+        data: 
+        xkey: 'y',
+        ykeys: ['한식', '중식', '일식'],
+        labels: ['한식', '중식', '일식'],
+    });
+    */
 })
-// 각각 데이터를 담아 둘 변수
-var menu_list = [];
-var datas = {};
-var datas1 = {};
 
-// 10초마다 갱신
-setInterval(getData, 10000);
-
-// ajax로 데이터를 받아와 처리
+data_time = {}
+data_day = {}
 function getData(){
     $.ajax({
         url : "{% url 'JY:getData' %}",
@@ -37,40 +57,85 @@ function getData(){
         },
         success: function(res)
         {
-            datas = res;
-            Data_to(datas);
+            data_time = res.data_times;
+            data_day = res.data_days;
+            a = Object.keys(data_time.data);
+
+            DrawGraph(res);
+        },
+        error : function(res){
+            alert("Error");
         }
-    })
-}
-
-// 받아온 데이터 가공
-function Data_to(a)
-{
-    menu_list = Object.keys(a); 
-    // json 객체의 길이 구하기 Object.keys(json).length;
-    // length를 안 붙이면 해당 키들의 값만 배열로 반환
-    
-    // key, value 값 얻어내기
-    //for ( var menu in a){
-    //   //alert(a[menu]);
-    //}
-    datas1 = a;
-    datas1['y'] = "데이터 수집가 안주영";
-    showGraph();
-}
-
-// 가공한 데이터 그리기
-function showGraph(){
-    $("#datas").empty();
-    Morris.Bar({
-        element: 'datas',
-        data: [
-            datas1,
-        ],
-        xkey: 'y',
-        ykeys: menu_list,
-        labels: menu_list
     });
+}
+
+function DrawGraph(res)
+{
+    var config = {
+        xkey: 'y',
+        xLabelAngle: 45,
+    };
+    var data;
+    //총 언급량
+    data = [
+        { y: '2018-04-01', '언급량' : '5'},
+        { y: '2018-04-02', '언급량' : '6'},
+        { y: '2018-04-03', '언급량' : '7'},
+        { y: '2018-04-04', '언급량' : '8'},
+        { y: '2018-04-05', '언급량' : '10'},
+        { y: '2018-04-06', '언급량' : '2'},
+        { y: '2018-04-07', '언급량' : '-1'}
+    ];
+    config.data = data;
+    config.ykeys = ['언급량'];
+    config.labels = ['총 언급량']
+    config.element = 'data1';
+    config.xLabels = "day";
+    Morris.Line(config);
+
+    //종류별 데이터
+    data = [
+        { y: '2018-04-01', '한식' : 5, '중식' : 100, '일식': 200},
+        { y: '2018-04-02', '한식' : 2, '중식' : 100, '일식': 200},
+        { y: '2018-04-03', '한식' : 1, '중식' : 100, '일식': 200},
+        { y: '2018-04-04', '한식' : -10, '중식' : 100, '일식': 200},
+        { y: '2018-04-05', '한식' : 20, '중식' : 100, '일식': 200},
+        { y: '2018-04-06', '한식' : 18, '중식' : 100, '일식': 200},
+        { y: '2018-04-07', '한식' : 36, '중식' : 100, '일식': 200}
+    ];
+    config.data = data;
+    config.ykeys = ['한식', '중식', '일식'];
+    config.labels =['한', '중', '일'];
+    config.element = 'data2';
+    Morris.Line(config);
+
+    //시간대별
+    col = []
+    d_list = []
+    for ( var a in data_time['data']){
+        ['data'][a]['y'] = "00:00";
+        data = JSON.stringify(data_time['data'][a]);
+        d_list.push(data);
+    }
+    alert(d_list[1]);
+    col = Object.keys(data_time['data'][0]);
+    config.labels = col;
+    config.xkey = 3;
+    config.ykeys = col;
+    config.data = d_list;
+    config.xLabels = "hour";
+    config.element = 'data3';
+    Morris.Line(config);
+
+    //요일별
+    config.xLabels = "day";
+    config.xLabelFormat = function (x){
+        day = ['일', '월', '화', '수', '목', '금', '토'];
+        return day[new Date(x).getDay()];
+    };
+    config.element = 'data4';
+    Morris.Line(config);
+
 }
 </script>
 </body>

@@ -4,112 +4,75 @@ import tweepy
 from tweepy.streaming import StreamListener
 import json, csv
 from datetime import datetime
+import pandas as pd
 
-def test():
-    print("hello")
-# 권한 키
-c_key = '17NYW4W4x9eedwg8QywWuntm7'
-c_s_key = 'LuyzvFr8m7RlsmvszuQaTQ8qYIvWmEtqW4G4ihVoJR8lhtFcoW'
-a_key = '1108953758187180033-q5GhwoOGRdjo0eByNTzMUPgI0X6JPi'
-a_s_key = 'VYfhk8OnyRRiUgvrMAnWosntolKlsFCMVYt4Zj4NplkoE'
-
-# 추출 데이터 및 기초 변수
-server_data = datetime.today().strftime("%Y%m%d")
-datas = {
-    'info' : {
-        
-    },
-    'count' : [
-        0, 0, 0
-    ],
-    'menu' : {
-
-    }
-}
-keywords = [
-    ['짜장면', '탕수육', '짬뽕', '훠궈', '팔보채'],
-    ['찌개', '비빔밥', '볶음', '수육', '나물', '국밥'],
-    ['우동', '규동', '돈가스', '돈카츠', '카레', '초밥', '스시']
+files = [
+    'd20190401',
+    'd20190402',
+    'd20190403',
+    'd20190404',
+    'd20190405',
+    'd20190406',
+    'd20190407'
 ]
 
-track_words = ['.', '!', '?', 'ㅋ', '짜장면', '탕수육', '짜장면', '탕수육', '짬뽕', '찌개', '밥', '비빔밥', '볶음', '팔보채', '훠궈',\
-            '돈가스', '우동', '규동', '짜장', '카레']
+menu_list = [['짜장면', '탕수육', '짬뽕', '훠궈', '팔보채'],
+    ['찌개', '비빔밥', '볶음', '수육', '나물', '국밥'],
+    ['우동', '규동', '돈가스', '카레', '초밥', '스시']]
 
-def init_on_day():
-    global datas
+def concat_file(*file_):
+    # create empty DataFrame object
+    df = pd.DataFrame()
+    if type(file_) == tuple:
+        file_list = file_[0]
+        for index in file_list:
+            # concat DataFrame objects
+            df = pd.concat([df, pd.read_csv('C:\\Users\\Ahnjuyoung\\Desktop\\twitter\\jytwitter\\datafile/'+index+'.csv', names=['날짜', '닉네임', '트윗번호', '내용'])], \
+                ignore_index=True)
+    return df
+
+def test(f_name):
+    #file_ = open('../datafile/'+f_name+'.csv', 'r', encoding='utf-8')
+    #csv = pd.read_csv(file_, names=['날짜', '닉네임', '트윗번호', '내용'])
+    #time = pd.to_datetime(csv['날짜'])
+    csv = concat_file(f_name)
     datas = {
         'info' : {
-            'data' : server_data,
+            'date' : f_name
         },
-        'count' : [
-            0, 0, 0
-        ],
-        'menu' : {
+        'count' : {
+            'total' : [0, 0, 0],
+        },
+        'data' : {
+            
         }
     }
-# 파일 쓰기
-def csv_write(data):
-    date_str = datetime.today().strftime("%Y%m%d")
-    global server_data, datas
-    if date_str > server_data:
-        server_data = date_str
-        init_on_day()
-
-    # write json
-    with open('j'+date_str+'.json', 'w', encoding='utf-8') as jw:
-        json.dump(datas, jw)
-        jw.close()
-
-    # write csv
-    with open('d'+date_str+'.csv', 'a', newline='\n', encoding='utf-8') as fw:
-        w = csv.writer(fw)
-        w.writerow([datetime.now(), data[0], data[1], data[2]])
-        fw.close()
-
-class listener(StreamListener):
-    def on_status(self, data):
-        print(data.created_at, data.user.screen_name, data.id, data.text)
-        for idx, key in enumerate(keywords):
-            for word in key:
-                if data.text.find(word) != -1:
-                    dataset = [data.user.screen_name, data.id, data.text]
-                    if not word in datas['menu'].keys():
-                        datas['count'][idx] += 1
-                        datas['menu'][word] = 1
-                    else:
-                        datas['menu'][word] += 1
-                        datas['count'][idx] += 1
-                    print(datas)
-                    csv_write(dataset)
-        return True
-
-    def on_error(self, status_code):
-        if status_code == 420:
-            return False
-        elif status_code == 401:
-            print("401 Error Occured")
-            return False
-
-def init():
-    auth = OAuthHandler(c_key, c_s_key)
-    auth.set_access_token(a_key, a_s_key)
-    api = tweepy.API(auth)
-    twit_stream = Stream(auth, listener())
-    twit_stream.filter(languages=['ko',], track=track_words, is_async=True)
-    try:
-        global datas
-        date_str = datetime.today().strftime("%Y%m%d")
-        json_data_file = open("j"+date_str+".json", "r", encoding="utf-8")
-        datas = json.loads(json_data_file.read())
-    except FileNotFoundError:
-        pass
-
-init()
+    # item initialize
+    for num in range(7):
+        datas['data'][num] = {}
+    for menu in menu_list:
+        for item in menu:
+            for num in range(7):
+                datas['data'][num][item] = 0
+    for hour in csv.iterrows():
+        time = None
+        try:
+            time = datetime.strptime(hour[1][0], '%Y-%m-%d %H:%M:%S.%f')
+        except:
+            time = datetime.strptime(hour[1][0], '%Y-%m-%d %H:%M:%S')
+        for idx, menus in enumerate(menu_list):
+            for item in menus:
+                if str(hour[1][3]).find(item) != -1:
+                    datas['count']['total'][idx] += 1
+                    datas['data'][time.weekday()][item] += 1
+    return datas
+    
 def main(request):   
-    return render(request, 'twitterAnal/index.html', {
-        'datas' : json.dumps(datas, ensure_ascii=False),
-    })
+    return render(request, 'twitterAnal/index.html')
 
 def getData(request):
-    data = json.dumps(datas, ensure_ascii=False)
-    return HttpResponse(data, content_type='json/application')
+    datas = {
+        'data_days' : json.loads(open(r'C:\Users\Ahnjuyoung\Desktop\twitter\jytwitter\twitterAnal\요일별.json', 'r').read()),
+        'data_times' :  json.loads(open(r'C:\Users\Ahnjuyoung\Desktop\twitter\jytwitter\twitterAnal\시간대별.json', 'r').read()) 
+    }
+    return HttpResponse(json.dumps(datas), content_type='application/json')
