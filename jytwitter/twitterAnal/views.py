@@ -72,7 +72,8 @@ def main(request):
 
 def getData(request):
     datas = {
-        'data_days' : json.loads(open(r'C:\Users\Ahnjuyoung\Desktop\twitter\jytwitter\twitterAnal\요일별.json', 'r').read()),
-        'data_times' :  json.loads(open(r'C:\Users\Ahnjuyoung\Desktop\twitter\jytwitter\twitterAnal\시간대별.json', 'r').read()) 
+        'data_days' : json.loads(open(r'C:\Users\PD3\Desktop\twitter-analysis\jytwitter\twitterAnal\요일별.json', 'r').read()),
+        'data_times' : json.loads(open(r'C:\Users\PD3\Desktop\twitter-analysis\jytwitter\twitterAnal\시간대별.json', 'r').read()),
+        'data_types' : json.loads(open(r'C:\Users\PD3\Desktop\twitter-analysis\jytwitter\twitterAnal\종류별.json', 'r').read())
     }
     return HttpResponse(json.dumps(datas), content_type='application/json')

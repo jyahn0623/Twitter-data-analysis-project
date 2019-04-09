@@ -29,9 +29,6 @@ def concat_file(*file_):
     return df
 
 def test(f_name):
-    #file_ = open('../datafile/'+f_name+'.csv', 'r', encoding='utf-8')
-    #csv = pd.read_csv(file_, names=['날짜', '닉네임', '트윗번호', '내용'])
-    #time = pd.to_datetime(csv['날짜'])
     csv = concat_file(f_name)
     datas = {
         'info' : {
@@ -64,11 +61,41 @@ def test(f_name):
                     datas['data'][time.hour][item] += 1
     return datas
 
-dic = test(files)
-f = open("시간대별.json", 'w')
-f.write(json.dumps(dic))
+# 총 언급량, 종류별 데이터
+def getOverall(files):
+    csv = concat_file(files)
+    datas = {
+        '4-1' : [0, 0, 0],
+        '4-2' : [0, 0, 0],
+        '4-3' : [0, 0, 0],
+        '4-4' : [0, 0, 0],
+        '4-5' : [0, 0, 0],
+        '4-6' : [0, 0, 0],
+        '4-7' : [0, 0, 0]
+    }
+    for data in csv.iterrows():
+        time = None
+        try:
+            time = datetime.strptime(data[1][0], '%Y-%m-%d %H:%M:%S.%f')
+        except:
+            time = datetime.strptime(data[1][0], '%Y-%m-%d %H:%M:%S')
+        for idx, step in enumerate(menu_list):
+            for menu in step:
+                if str(data[1][3]).find(menu) != -1:
+                    datas['{0}-{1}'.format(time.month, time.day)][idx] += 1
+    return datas
+        
 
+
+#dic = test(files)
+#f = open("시간대별.json", 'w')
+#f.write(json.dumps(dic))
+
+dic = getOverall(files)
 print(dic)
+_f = open("종류별.json", "w")
+_f.write(json.dumps(dic))
+#print(dic)
 #for f in files:
     #data = test(f)
     #print(data)

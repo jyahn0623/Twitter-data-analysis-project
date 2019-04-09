@@ -10,27 +10,29 @@
     <title>Twitter Analysis</title>
 </head>
 <body>
-<button class="btn btn-danger" onclick="getData();">Click</button>
-    <div>
+<button class="btn btn-danger col-sm-12" onclick="getData();">Click</button>
+    <div class="col-sm-6">
         <h2>총 언급량</h2>
         <div id="data1"></div>
     </div>
     <hr>
-    <div>
+    <div class="col-sm-6">
         <h2>종류별 데이터</h2>
         <div id="data2"></div>
     </div>
     <hr>
-    <div>
+    <div class="col-sm-6">
         <h2>시간대별 관심도</h2>
         <div id="data3"></div>
     </div>
     <hr>
-    <div>
+    <div class="col-sm-6">
         <h2>요일별 관심도</h2>
         <div id="data4"></div>
     </div>
     <hr>
+
+<div id="data"></div>
 
 <script src="http://code.jquery.com/jquery-2.0.0.js"></script>  
 <script>
@@ -60,7 +62,7 @@ function getData(){
             data_time = res.data_times;
             data_day = res.data_days;
             a = Object.keys(data_time.data);
-
+            $("#data").html(JSON.stringify(data_time));
             DrawGraph(res);
         },
         error : function(res){
@@ -77,14 +79,19 @@ function DrawGraph(res)
     };
     var data;
     //총 언급량
+    var value = []
+    for ( var item in res.data_types){
+        var tmp_list = res.data_types[item];
+        value.push(tmp_list[0]+tmp_list[1]+tmp_list[2]);
+    }
     data = [
-        { y: '2018-04-01', '언급량' : '5'},
-        { y: '2018-04-02', '언급량' : '6'},
-        { y: '2018-04-03', '언급량' : '7'},
-        { y: '2018-04-04', '언급량' : '8'},
-        { y: '2018-04-05', '언급량' : '10'},
-        { y: '2018-04-06', '언급량' : '2'},
-        { y: '2018-04-07', '언급량' : '-1'}
+        { y: '2018-04-01', '언급량' : value[0]},
+        { y: '2018-04-02', '언급량' : value[1]},
+        { y: '2018-04-03', '언급량' : value[2]},
+        { y: '2018-04-04', '언급량' : value[3]},
+        { y: '2018-04-05', '언급량' : value[4]},
+        { y: '2018-04-06', '언급량' : value[5]},
+        { y: '2018-04-07', '언급량' : value[6]}
     ];
     config.data = data;
     config.ykeys = ['언급량'];
@@ -95,13 +102,13 @@ function DrawGraph(res)
 
     //종류별 데이터
     data = [
-        { y: '2018-04-01', '한식' : 5, '중식' : 100, '일식': 200},
-        { y: '2018-04-02', '한식' : 2, '중식' : 100, '일식': 200},
-        { y: '2018-04-03', '한식' : 1, '중식' : 100, '일식': 200},
-        { y: '2018-04-04', '한식' : -10, '중식' : 100, '일식': 200},
-        { y: '2018-04-05', '한식' : 20, '중식' : 100, '일식': 200},
-        { y: '2018-04-06', '한식' : 18, '중식' : 100, '일식': 200},
-        { y: '2018-04-07', '한식' : 36, '중식' : 100, '일식': 200}
+        { y: '2018-04-01', '한식' : res.data_types['4-1'][1], '중식' : res.data_types['4-1'][0], '일식': res.data_types['4-1'][2]},
+        { y: '2018-04-02', '한식' : res.data_types['4-2'][1], '중식' : res.data_types['4-2'][0], '일식': res.data_types['4-2'][2]},
+        { y: '2018-04-03', '한식' : res.data_types['4-3'][1], '중식' : res.data_types['4-3'][0], '일식': res.data_types['4-3'][2]},
+        { 'y': '2018-04-04', '한식' : res.data_types['4-4'][1], '중식' : res.data_types['4-4'][0], '일식': res.data_types['4-4'][2]},
+        { y: '2018-04-05', '한식' : res.data_types['4-5'][1], '중식' : res.data_types['4-5'][0], '일식': res.data_types['4-5'][2]},
+        { y: '2018-04-06', '한식' : res.data_types['4-6'][1], '중식' : res.data_types['4-6'][0], '일식': res.data_types['4-6'][2]},
+        { y: '2018-04-07', '한식' : res.data_types['4-7'][1], '중식' : res.data_types['4-7'][0], '일식': res.data_types['4-7'][2]}
     ];
     config.data = data;
     config.ykeys = ['한식', '중식', '일식'];
@@ -113,21 +120,25 @@ function DrawGraph(res)
     col = []
     d_list = []
     for ( var a in data_time['data']){
-        ['data'][a]['y'] = "00:00";
+        data_time['data'][a]['hours'] = "10:00";
         data = JSON.stringify(data_time['data'][a]);
         d_list.push(data);
     }
-    alert(d_list[1]);
+    alert(Object.keys(data_time['data'][0]));
+
+    // labels, keys setting
     col = Object.keys(data_time['data'][0]);
     config.labels = col;
-    config.xkey = 3;
     config.ykeys = col;
+    config.xkey = 'hours';
+    config.parseTime = false;
     config.data = d_list;
     config.xLabels = "hour";
     config.element = 'data3';
     Morris.Line(config);
 
     //요일별
+    /*
     config.xLabels = "day";
     config.xLabelFormat = function (x){
         day = ['일', '월', '화', '수', '목', '금', '토'];
@@ -135,7 +146,7 @@ function DrawGraph(res)
     };
     config.element = 'data4';
     Morris.Line(config);
-
+    */
 }
 </script>
 </body>
