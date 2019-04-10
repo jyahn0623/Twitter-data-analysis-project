@@ -33,12 +33,12 @@
     <hr>
     <div class="col-sm-6">
         <h2>시간대별 관심도(종류별)</h2>
-        <div id="data3"></div>
+        <div id="data5"></div>
     </div>
     <hr>
     <div class="col-sm-6">
         <h2>요일별 관심도(종류별)</h2>
-        <div id="data4"></div>
+        <div id="data6"></div>
     </div>
 
 <div id="data"></div>
@@ -71,7 +71,6 @@ function getData(){
             data_time = res.data_times;
             data_day = res.data_days;
             a = Object.keys(data_time.data);
-            $("#data").html(JSON.stringify(res));
             DrawGraph(res);
         },
         error : function(res){
@@ -120,8 +119,8 @@ function DrawGraph(res)
         { y: '2019-04-07', '한식' : res.data_types['4-7'][1], '중식' : res.data_types['4-7'][0], '일식': res.data_types['4-7'][2]}
     ];
     config.data = data;
-    config.ykeys = ['한식', '중식', '일식'];
-    config.labels =['한', '중', '일'];
+    config.ykeys = ['중식', '한식', '일식'];
+    config.labels =['중', '한', '일'];
     config.element = 'data2';
     Morris.Line(config);
 
@@ -160,6 +159,41 @@ function DrawGraph(res)
     config.element = 'data4';
     Morris.Line(config);
 
+    // 요일별
+    num =0;
+    d_list=[];
+    data = res.data_days_by_type;
+    //alert(Object.entries(res.data_days_by_type['data']));
+    for ( var a in data['data']){
+        data['data'][a]['day'] = day[num++];
+        d_list.push(data['data'][a]);
+        //alert(Object.values(data['data'][a]) + Object.keys(data['data'][a]));
+    }
+    config.labels = ['중식', '한식', '일식'];
+    config.ykeys = ['0', '1', '2'];
+    config.xkey = "day";
+    //config.xLabels = "day";
+    config.data = d_list;
+    config.element = "data6";
+    Morris.Line(config);
+
+
+    // 시간대별 관심도(종류별)
+    d_list = [];
+    num = 0;
+    tmp_data = res.data_times_by_type;
+    for ( var a in Object.keys(tmp_data['data'])){        
+        tmp_data['data'][a]["hours"] = num++;
+        d_list.push(tmp_data['data'][a]);
+    }
+    config.element = "data5";
+    config.xkey = "hours"
+    config.data = d_list;
+    // 배열도 키 값으로 0, 1, 2 인덱스에 매칭되어 있다.
+    config.labels = ['중식', '한식', '일식'];
+    config.ykeys = ['0', '1', '2'];
+    Morris.Line(config);
+    
 }
 </script>
 </body>
