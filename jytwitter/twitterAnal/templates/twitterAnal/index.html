@@ -84,14 +84,22 @@ function DrawGraph(res)
     var config = {
         xkey: 'y',
         xLabelAngle: 45,
+        hideHover : true
     };
     var data;
+    var datas = [];
     //총 언급량
-    var value = []
+    //var value = []
     for ( var item in res.data_types){
         var tmp_list = res.data_types[item];
-        value.push(tmp_list[0]+tmp_list[1]+tmp_list[2]);
+        datas.push({
+            'y' : item,
+            '언급량' : tmp_list[0]+tmp_list[1]+tmp_list[2]
+        });
     }
+    
+    //alert(Object.keys(res.data_types));
+    /*
     data = [
         { y: '2019-04-01', '언급량' : value[0]},
         { y: '2019-04-02', '언급량' : value[1]},
@@ -101,14 +109,27 @@ function DrawGraph(res)
         { y: '2019-04-06', '언급량' : value[5]},
         { y: '2019-04-07', '언급량' : value[6]}
     ];
-    config.data = data;
+    */
+    config.data = datas;
     config.ykeys = ['언급량'];
     config.labels = ['총 언급량']
     config.element = 'data1';
-    config.xLabels = "day";
+    config.xLabels = "y";
+    config.parseTime = false;
     Morris.Line(config);
 
     //종류별 데이터
+    datas = [];
+    for ( var item in res.data_types){
+        var tmp_list = res.data_types[item];
+        datas.push({
+            'y' : item,
+            '한식' : tmp_list[1],
+            '중식' : tmp_list[0],
+            '일식' : tmp_list[2]
+        });
+    }
+    /*
     data = [
         { y: '2019-04-01', '한식' : res.data_types['4-1'][1], '중식' : res.data_types['4-1'][0], '일식': res.data_types['4-1'][2]},
         { y: '2019-04-02', '한식' : res.data_types['4-2'][1], '중식' : res.data_types['4-2'][0], '일식': res.data_types['4-2'][2]},
@@ -118,7 +139,8 @@ function DrawGraph(res)
         { y: '2019-04-06', '한식' : res.data_types['4-6'][1], '중식' : res.data_types['4-6'][0], '일식': res.data_types['4-6'][2]},
         { y: '2019-04-07', '한식' : res.data_types['4-7'][1], '중식' : res.data_types['4-7'][0], '일식': res.data_types['4-7'][2]}
     ];
-    config.data = data;
+    */
+    config.data = datas;
     config.ykeys = ['중식', '한식', '일식'];
     config.labels =['중', '한', '일'];
     config.element = 'data2';
@@ -198,3 +220,4 @@ function DrawGraph(res)
 </script>
 </body>
 </html>
+

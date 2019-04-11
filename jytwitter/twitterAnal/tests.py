@@ -9,7 +9,8 @@ files = [
     'd20190404',
     'd20190405',
     'd20190406',
-    'd20190407'
+    'd20190407',
+    
 ]
 
 menu_list = [['짜장면', '탕수육', '짬뽕', '훠궈', '팔보채'],
@@ -156,7 +157,7 @@ def getOverall(files):
                     datas['{0}-{1}'.format(time.month, time.day)][idx] += 1
     return datas
         
-        
+
 '''
 dic = extract_by_time(files, 1)
 f = open("시간대별1_1.json", 'w')
