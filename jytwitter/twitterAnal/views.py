@@ -77,6 +77,6 @@ def getData(request):
         'data_times' : json.loads(open(path+'/twitterAnal/시간대별1_1.json', 'r').read()),
         'data_times_by_type' : json.loads(open(path+'/twitterAnal/시간대별1_2.json', 'r').read()),
         'data_days_by_type' : json.loads(open(path+'/twitterAnal/요일별1_2.json', 'r').read()),
-        'data_types' : json.loads(open(path+'/twitterAnal/종류별.json', 'r').read())
+        'data_types' : json.loads(open(path+'/twitterAnal/종류별1_2.json', 'r').read())
     }
     return HttpResponse(json.dumps(datas), content_type='application/json')

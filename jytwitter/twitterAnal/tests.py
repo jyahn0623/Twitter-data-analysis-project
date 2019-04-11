@@ -9,8 +9,7 @@ files = [
     'd20190404',
     'd20190405',
     'd20190406',
-    'd20190407',
-    
+    'd20190407'
 ]
 
 menu_list = [['짜장면', '탕수육', '짬뽕', '훠궈', '팔보채'],
@@ -135,16 +134,15 @@ def extract_by_time(f_name, type_):
 
 # 총 언급량, 종류별 데이터
 def getOverall(files):
+    datas = {}
     csv = concat_file(files)
-    datas = {
-        '4-1' : [0, 0, 0],
-        '4-2' : [0, 0, 0],
-        '4-3' : [0, 0, 0],
-        '4-4' : [0, 0, 0],
-        '4-5' : [0, 0, 0],
-        '4-6' : [0, 0, 0],
-        '4-7' : [0, 0, 0]
-    }
+    for d in files: 
+        month = d[-4:-2]
+        day = d[-2:]
+        datas.update({
+            '{0}-{1}'.format(month, day) : [0, 0, 0],
+        })
+        
     for data in csv.iterrows():
         time = None
         try:
@@ -154,16 +152,18 @@ def getOverall(files):
         for idx, step in enumerate(menu_list):
             for menu in step:
                 if str(data[1][3]).find(menu) != -1:
-                    datas['{0}-{1}'.format(time.month, time.day)][idx] += 1
+                    datas['{0}-{1}'.format(str(time.month).zfill(2), str(time.day).zfill(2))][idx] += 1
     return datas
-        
 
-'''
-dic = extract_by_time(files, 1)
-f = open("시간대별1_1.json", 'w')
+dic = extract_by_time(files, 2)
+f = open("시간대별1_2.json", 'w')
 f.write(json.dumps(dic))
 
+dic = getOverall(files)
+f = open("종류별1_2.json", 'w')
+f.write(json.dumps(dic))
 
+'''
 dic = getOverall(files)
 print(dic)
 _f = open("종류별.json", "w")
