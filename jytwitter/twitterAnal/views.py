@@ -73,10 +73,10 @@ def main(request):
 def getData(request):
     path = os.getcwd()
     datas = {
-        'data_days' : json.loads(open(path+'/twitterAnal/요일별1_1.json', 'r').read()),
-        'data_times' : json.loads(open(path+'/twitterAnal/시간대별1_1.json', 'r').read()),
-        'data_times_by_type' : json.loads(open(path+'/twitterAnal/시간대별1_2.json', 'r').read()),
-        'data_days_by_type' : json.loads(open(path+'/twitterAnal/요일별1_2.json', 'r').read()),
-        'data_types' : json.loads(open(path+'/twitterAnal/종류별1_2.json', 'r').read())
+        'data_days' : json.loads(open(path+'/twitterAnal/요일별3_1.json', 'r').read()),
+        'data_times' : json.loads(open(path+'/twitterAnal/시간대별3_1.json', 'r').read()),
+        'data_times_by_type' : json.loads(open(path+'/twitterAnal/시간대별3_2.json', 'r').read()),
+        'data_days_by_type' : json.loads(open(path+'/twitterAnal/요일별3_2.json', 'r').read()),
+        'data_types' : json.loads(open(path+'/twitterAnal/종류별3_1.json', 'r').read())
     }
     return HttpResponse(json.dumps(datas), content_type='application/json')

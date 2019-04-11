@@ -14,31 +14,37 @@
     <div class="col-sm-6">
         <h2>총 언급량</h2>
         <div id="data1"></div>
+        <div class="text-center" id="legend5" style="padding-left : 5%;"></div>
     </div>
     <hr>
     <div class="col-sm-6">
         <h2>종류별 데이터</h2>
         <div id="data2"></div>
+        <div class="text-center" id="legend2" style="padding-left : 5%;"></div>
     </div>
     <hr>
     <div class="col-sm-6">
         <h2>시간대별 관심도(메뉴별)</h2>
         <div id="data3"></div>
+        <div class="text-center" id="legend" style="padding-left : 5%;"></div>
     </div>
     <hr>
     <div class="col-sm-6">
         <h2>요일별 관심도(메뉴별)</h2>
         <div id="data4"></div>
+        <div class="text-center" style="padding-left : 5%;" id="legend1"></div>
     </div>
     <hr>
     <div class="col-sm-6">
         <h2>시간대별 관심도(종류별)</h2>
         <div id="data5"></div>
+        <div class="text-center" id="legend3" style="padding-left : 5%;"></div>
     </div>
     <hr>
     <div class="col-sm-6">
         <h2>요일별 관심도(종류별)</h2>
         <div id="data6"></div>
+        <div class="text-center" id="legend4" style="padding-left : 5%;"></div>
     </div>
 
 <div id="data"></div>
@@ -81,11 +87,16 @@ function getData(){
 
 function DrawGraph(res)
 {
+    colors = ['#0b62a4', '#DCE775', '#F48FBE', '#EC407E', '#7B1FA2', '#5E35BE','#BBDEFE', '#64B5FE', '#5C6BC0', '#303F9F', '#1565CE', '#82B1FE', '#80DEEE', '#00E5FE','#81C78E', '#00796B', '#5F6460'];
     var config = {
         xkey: 'y',
         xLabelAngle: 45,
+        lineColors: colors,
         hideHover : true
     };
+
+  
+
     var data;
     var datas = [];
     //총 언급량
@@ -97,26 +108,23 @@ function DrawGraph(res)
             '언급량' : tmp_list[0]+tmp_list[1]+tmp_list[2]
         });
     }
-    
-    //alert(Object.keys(res.data_types));
-    /*
-    data = [
-        { y: '2019-04-01', '언급량' : value[0]},
-        { y: '2019-04-02', '언급량' : value[1]},
-        { y: '2019-04-03', '언급량' : value[2]},
-        { y: '2019-04-04', '언급량' : value[3]},
-        { y: '2019-04-05', '언급량' : value[4]},
-        { y: '2019-04-06', '언급량' : value[5]},
-        { y: '2019-04-07', '언급량' : value[6]}
-    ];
-    */
     config.data = datas;
     config.ykeys = ['언급량'];
     config.labels = ['총 언급량']
     config.element = 'data1';
     config.xLabels = "y";
     config.parseTime = false;
-    Morris.Line(config);
+    b = Morris.Line(config);
+    
+    b.options.labels.forEach(function(val, i){
+        var span = $("<span></span>");
+        span.text(val).prepend("<span>　</span>");
+        span.find("span").css('background-color', colors[i]).css("margin-left", "5px");
+        $("#legend5").append(span);
+    });
+
+    
+
 
     //종류별 데이터
     datas = [];
@@ -129,23 +137,18 @@ function DrawGraph(res)
             '일식' : tmp_list[2]
         });
     }
-    /*
-    data = [
-        { y: '2019-04-01', '한식' : res.data_types['4-1'][1], '중식' : res.data_types['4-1'][0], '일식': res.data_types['4-1'][2]},
-        { y: '2019-04-02', '한식' : res.data_types['4-2'][1], '중식' : res.data_types['4-2'][0], '일식': res.data_types['4-2'][2]},
-        { y: '2019-04-03', '한식' : res.data_types['4-3'][1], '중식' : res.data_types['4-3'][0], '일식': res.data_types['4-3'][2]},
-        { y: '2019-04-04', '한식' : res.data_types['4-4'][1], '중식' : res.data_types['4-4'][0], '일식': res.data_types['4-4'][2]},
-        { y: '2019-04-05', '한식' : res.data_types['4-5'][1], '중식' : res.data_types['4-5'][0], '일식': res.data_types['4-5'][2]},
-        { y: '2019-04-06', '한식' : res.data_types['4-6'][1], '중식' : res.data_types['4-6'][0], '일식': res.data_types['4-6'][2]},
-        { y: '2019-04-07', '한식' : res.data_types['4-7'][1], '중식' : res.data_types['4-7'][0], '일식': res.data_types['4-7'][2]}
-    ];
-    */
+
     config.data = datas;
     config.ykeys = ['중식', '한식', '일식'];
     config.labels =['중', '한', '일'];
     config.element = 'data2';
-    Morris.Line(config);
-
+    a = Morris.Line(config);
+    a.options.ykeys.forEach(function(label, i){
+        var $span = $("<span></span>");
+        $span.text(label).prepend("<span>　</span>");
+        $span.find("span").css('background-color', colors[i]).css("margin-left", "5px");
+        $("#legend2, #legend3, #legend4").append($span);
+    });
     //시간대별
     col = []
     d_list = []
@@ -156,6 +159,17 @@ function DrawGraph(res)
         data = data_time['data'][a];
         d_list.push(data);
     }
+
+    //legend
+    for (var i=0; i<colors.length; i++)
+    {
+        var span = "<span class=\"mr-3 ml-3\" style=\"background-color :"+colors[i]+"\">　</span>" + col[i] + " ";
+        $("#legend").append(span);
+        $("#legend1").append(span);
+    
+    }
+
+
     // labels, keys setting
     config.labels = col;
     config.ykeys = col;
