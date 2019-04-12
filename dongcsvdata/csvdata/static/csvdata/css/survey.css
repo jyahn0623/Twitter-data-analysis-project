@@ -1,0 +1,24 @@
+
+.subeval{
+    background-color: burlywood;
+}
+
+.survey_menu {
+    margin : auto;
+    margin-left : 5%;
+    margin-top : 15%;
+}
+
+.subeval_menu{
+    margin-top : 10px;
+    margin-left : 5%;
+    border-style: dotted;
+    border-color: black;
+    width: 500px;
+}
+
+.survey_content{
+    display: inline;
+}
+
+

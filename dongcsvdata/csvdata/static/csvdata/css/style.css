@@ -1,0 +1,34 @@
+* {
+    margin: 0; padding: 0; background: #ffffff;
+}
+html, body{
+    height: 85%;
+}	
+#login_page{
+    width: 771px; height: 520px; margin: auto; margin-top: 200px; align-content: center; border: 1px #F0F0F0;
+    ;overflow: hidden; background: #efefef;
+}
+    /*이미지*/
+#login_page_top{width: 772px; height: 44px;}
+#login_page_text{width: 301px; height: 35px; align: center; padding-left: 232px; padding-right: 264px; padding-top: 70px; padding-bottom: 10px; background: #efefef;}
+#login_page_ID{
+    width: 772; height: 40; background: #efefef;  align-items: center; padding-bottom: 3px;padding-top: 3px;
+}
+#login_page_PW{
+    width: 772; height: 40; background: #efefef;  align-items: center; padding-bottom: 3px;padding-top: 3px;
+    
+}
+
+
+
+#login_page_PW input, #login_page_ID input{
+    position : relative;
+    bottom : 35%;
+    line-height : 3em;
+}
+
+#login_page_send{ margin-top : 10px; width: 772; height: 48; background: #efefef; padding-left: 211px; align-items: center; padding-bottom: 3px;padding-top: 3px;}
+#login_page_words{width: 432; height: 75;  align: center; background: #efefef; padding-left: 275px; padding-bottom: 50px;padding-top: 10px;}
+#login_page_words button{
+    border-style: none;
+}

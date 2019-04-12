@@ -1,0 +1,61 @@
+{% load static %}
+<html>
+<head>
+<!--Morris, jquery, bootstrap cdn import-->
+ <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
+ <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+ <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+ <script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <title>Twitter Analysis</title>
+</head>
+<body>
+<button class="btn btn-danger col-sm-12" onclick="">Click</button>
+    <div class="col-sm-6">
+        <h2>시간대별 관심도(특정메뉴가 포함된 1회 트윗당 포함된 단어수)</h2>
+        <div id="data1"></div>
+        <div class="text-center" id="legend5" style=""></div>
+    </div>
+<div id="data"></div>
+
+<script src="http://code.jquery.com/jquery-2.0.0.js"></script>  
+<script>
+
+//console.log({{food01datasum}})
+
+$(document).ready(function(){
+    var colors = ['#0b62a4', '#DCE775', '#F48FBE', '#EC407E', '#7B1FA2', '#5E35BE','#BBDEFE', '#64B5FE', '#5C6BC0', '#303F9F', '#1565CE', '#82B1FE', '#80DEEE', '#00E5FE','#81C78E', '#00796B', '#5F6460'];
+    var menu_list = ['짜장면', '탕수육', '짬뽕', '훠궈', '팔보채','찌개', '비빔밥', '볶음', '수육', '나물', '국밥','우동', '규동', '돈가스', '카레', '초밥', '스시'];
+    var data = JSON.parse("{{data}}".replace(/&quot;/g, '"'));
+    d_list = [];
+    for ( var item in data ){
+        data[item]['time'] = item;
+        data_ = data[item];
+        d_list.push(data_);
+    }
+    
+    b = Morris.Line({
+        element: 'data1',
+        data: d_list,
+        xkey: 'time',
+        ykeys: menu_list,
+        xLabels : 'time',
+        labels: menu_list,
+        parseTime : false,
+        hideHover : true,
+        lineColors: colors,
+        ymax : 110,
+        xLabelAngle: 45,
+    });
+
+        b.options.labels.forEach(function(val, i){
+            var span = $("<span></span>");
+            span.text(val).prepend("<span>　</span>");
+            span.find("span").css('background-color', colors[i]).css("margin-left", "5px");
+            $("#legend5").append(span);
+        });
+
+})
+</script>
+</body>
+</html>
