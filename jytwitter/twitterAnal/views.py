@@ -94,8 +94,11 @@ def init():
     auth = OAuthHandler(c_key, c_s_key)
     auth.set_access_token(a_key, a_s_key)
     api = tweepy.API(auth)
-    twit_stream = Stream(auth, listener())
-    twit_stream.filter(languages=['ko',], track=track_words, is_async=True)
+    try:
+        twit_stream = Stream(auth, listener())
+        twit_stream.filter(languages=['ko',], track=track_words, is_async=True)
+    except:
+        pass
     try:
         global datas
         date_str = datetime.today().strftime("%Y%m%d")
