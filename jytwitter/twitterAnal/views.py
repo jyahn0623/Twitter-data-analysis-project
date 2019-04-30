@@ -16,15 +16,9 @@ a_s_key = 'VYfhk8OnyRRiUgvrMAnWosntolKlsFCMVYt4Zj4NplkoE'
 # 추출 데이터 및 기초 변수
 server_data = datetime.today().strftime("%Y%m%d")
 datas = {
-    'info' : {
-        
-    },
-    'count' : [
-        0, 0, 0
-    ],
-    'menu' : {
-
-    }
+    'info' : {},
+    'count' : [0, 0, 0],
+    'menu' : {}
 }
 keywords = [
     ['짜장면', '탕수육', '짬뽕', '훠궈', '팔보채'],
@@ -68,7 +62,7 @@ def csv_write(data):
 
 class listener(StreamListener):
     def on_status(self, data):
-        print(data.created_at, data.user.screen_name, data.id, data.text)
+        #print(data.created_at, data.user.screen_name, data.id, data.text)
         for idx, key in enumerate(keywords):
             for word in key:
                 if data.text.find(word) != -1:
@@ -113,6 +107,18 @@ def main(request):
         'datas' : json.dumps(datas, ensure_ascii=False),
     })
 
+# send data by ajax
 def getData(request):
-    data = json.dumps(datas, ensure_ascii=False)
+    list_menu = list(datas['menu'])
+    for i in range(len(list_menu)):
+        for j in range(len(list_menu)):
+            if datas['menu'][list_menu[i]] > datas['menu'][list_menu[j]]:
+                tmp = list_menu[j]
+                list_menu[j] = list_menu[i]
+                list_menu[i] = tmp
+    params = {
+        'datas' : datas,
+        'rank' : list_menu
+    }
+    data = json.dumps(params, ensure_ascii=False)
     return HttpResponse(data, content_type='json/application')
