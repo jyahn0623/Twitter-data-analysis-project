@@ -2,7 +2,7 @@ from django.shortcuts import render, HttpResponse
 from tweepy import Stream, OAuthHandler
 import tweepy
 from tweepy.streaming import StreamListener
-import json, csv
+import json, csv, os, redis
 from datetime import datetime
 
 def test():
@@ -41,6 +41,7 @@ def init_on_day():
         'menu' : {
         }
     }
+    
 # 파일 쓰기
 def csv_write(data):
     date_str = datetime.today().strftime("%Y%m%d")
@@ -122,3 +123,49 @@ def getData(request):
     }
     data = json.dumps(params, ensure_ascii=False)
     return HttpResponse(data, content_type='json/application')
+
+
+def search(request):
+    return render(request, "twitterAnal/search_by_date.html")
+
+def getData1(request):
+    if request.method == 'POST':
+        data = {}
+        isExists = False
+        date = request.POST.get('date')  
+        date = date.replace('-', '')
+        json_file = 'j'+date+'.json'
+        if findFile(json_file):
+            isExists = True
+            data.update({'data' : json.loads(open(json_file, 'r').read())})
+        data.update({'isExists' : isExists,})
+
+        return HttpResponse(json.dumps(data, ensure_ascii=False), content_type='json/application')
+
+def findFile(file_name):
+    isExists = False
+    if os.path.isfile(file_name): 
+        isExists = True
+
+    return isExists
+
+def report(request):
+    if request.method == 'POST':
+        report_msg = request.POST.get('content')
+        storeDataInRedis(report_msg)
+    return render(request, 'twitterAnal/report.html')
+
+### redis ##
+report_cnt = 0
+def storeDataInRedis(message):
+    global report_cnt
+    try:
+        r = redis.StrictRedis(host="localhost", port=6379, password="", decode_responses=True)
+        r.set(report_cnt, message)
+        report_cnt = report_cnt + 1
+
+        for message in r.keys():
+            print(r.get(message))
+    except Exception as error:
+        print(error)
+

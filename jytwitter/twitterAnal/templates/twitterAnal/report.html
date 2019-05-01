@@ -1,0 +1,23 @@
+{% extends 'twitterAnal/header.html' %}
+{% load static %}
+
+{% block content %}
+    <form method="POST" action="{% url 'jy:report' %}">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="reportError">오류 내용 및 건의사항</label>
+          <textarea class="form-control" id="report" name="content" placeholder="오류 사항 및 건의사항 입력"></textarea>
+          <small id="reportHelp" class="form-text text-muted">해당 내용은 서버에 저장됩니다.</small>
+        </div>
+        <input class="btn btn-primary" type="submit" value="전송" onclick="alerting()">
+    </form>
+
+
+    <script>
+        function alerting()
+        {
+            alert("소중한 의견 감사합니다.");
+        }
+        
+    </script>
+{% endblock %}

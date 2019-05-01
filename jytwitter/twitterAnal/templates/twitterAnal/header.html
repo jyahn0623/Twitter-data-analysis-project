@@ -1,0 +1,54 @@
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Data Analysis</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+  </head>
+  <body>
+
+    <div class="container">
+      <div class="header">
+        <nav>
+          <ul class="nav nav-pills pull-right">
+            <li role="presentation"  id="realtime_btn"><a href="{% url 'jy:main' %}">실시간 조회</a></li>
+            <li role="presentation" id="saerch_by_date_btn"><a href="{% url 'jy:search' %}">일별 조회</a></li>
+            <li role="presentation" id="report"><a href="{% url 'jy:report' %}">오류 보고</a></li>
+          </ul>
+        </nav>
+        <h3 class="text-muted">Data Analysis</h3>
+      </div>
+      <div>
+        {% block content %}{% endblock %}   
+      </div>
+
+      <div id="rank" class="text-center"></div>
+
+      <footer class="footer">
+        <p>&copy; AHN JUYOUNG</p>
+      </footer>
+
+    </div> <!-- /container -->
+
+    <script src="http://code.jquery.com/jquery-2.0.0.js"></script>  
+    <script>
+        $("li").on("click", function(){
+            recent_btn = $(this).attr("id");
+           $(this).addClass("active");
+        })
+
+    
+    </script>
+  </body>
+</html>

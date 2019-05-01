@@ -1,22 +1,21 @@
-
-
+import os, json
+import redis
 # Create your tests here.
 
-a = {
-    '김밥' : 30,
-    '초밥' : 25,
-    '유부' : 58,
-    '곤니찌와' : 100,
-    '탕수' : 12
-}
 
-list_menu = list(a)
-for i in range(len(list_menu)):
-    for j in range(len(list_menu)):
-        if a[list_menu[i]] > a[list_menu[j]]:
-            tmp = list_menu[j]
-            list_menu[j] = list_menu[i]
-            list_menu[i] = tmp
+redis_host = "localhost"
+redis_port = 6379
+redis_password = ""
 
-for menu in list_menu:
-    print(a[menu], menu)
+def hello_redis():
+    try:
+        r = redis.StrictRedis(host=redis_host, port=redis_port, password=redis_password, decode_responses=True)
+        r.set('a', '내 이름은 안주영!')
+        r.set('a', '내 이름은 안주영ss!')
+
+        msg = r.get('a')
+        print(r.keys())
+    except Exception as e:
+        print(e)
+
+hello_redis()

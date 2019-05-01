@@ -1,0 +1,96 @@
+{% extends 'twitterAnal/header.html' %}
+{% load static %}
+{% block content %}
+    <div class="container mt-5">
+        <input id="date" type="date"><input id="search" style="margin-left : 5px;" class="btn btn-info" type="button" value="조회" onclick="search_by_date();">
+    </div>
+    <div style="font-size : 30px"><span id="time"></span></div>
+    <div id="datas"></div>
+    <div id="rank"></div>
+
+    <script src="http://code.jquery.com/jquery-2.0.0.js"></script>  
+    <script>
+        $(document).ready(function(){
+            var now = new Date();
+            var day = ("0" + now.getDate()).slice(-2);
+            var month = ("0" + (now.getMonth() + 1)).slice(-2);
+            $("#date").val(now.getFullYear()+"-"+month+"-"+day);
+        })
+        
+         function showGraph(datas){
+            var colors = ['#0b62a4', '#DCE775', '#F48FBE', '#EC407E', '#7B1FA2', '#5E35BE','#BBDEFE', '#64B5FE', '#5C6BC0', '#303F9F', '#1565CE', '#82B1FE', '#80DEEE',
+                         '#00E5FE','#81C78E', '#00796B', '#5F6460'];
+            var menu_list = Object.keys(datas.menu); 
+            var datas1 = datas.menu;
+            datas1['y'] = 'Twitter Data Anaylsis by AJY';
+            $("#time").html($("#date").val());
+            $("#datas").empty();
+            Morris.Bar({
+                element: 'datas',
+                data: [
+                    datas1,
+                ],
+                barColors : colors,
+                xkey: "y",
+                ykeys: menu_list,
+                labels: menu_list,
+                hideHover : true
+            });
+            sorting(datas);
+        }
+
+
+        function search_by_date(){
+            var date = $("#date").val();
+            if(date == ""){
+                alert("날짜를 선택해 주세요.");
+            }else{
+                 $.ajax({
+                    type : "POST",
+                    url : "{% url 'jy:getData1' %}",
+                    data : {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}',
+                        'date' : date
+                    },
+                    success : function(res){
+                        if (res.isExists == false){
+                            alert("해당 일자에는 데이터 파일이 존재하지 않습니다.");
+                        }else{
+                            alert("해당 일자의 데이터 파일이 존재하여 로드합니다.");
+                            showGraph(res.data);
+                        }
+                    },
+                    error : function(a, b, c){
+                        alert(a + " " + b + " " + c);
+                    }
+                })
+            }
+        }
+        function sorting(data)
+        {
+            $("#rank").empty();
+            var menu_list = Object.keys(data.menu);
+            for (var i=0; i<menu_list.length; i++)
+            {
+                for (var j=i; j<menu_list.length; j++)
+                {
+                    if (data.menu[menu_list[i]] < data.menu[menu_list[j]])
+                    {
+                        var tmp = menu_list[i];
+                        menu_list[i] = menu_list[j];
+                        menu_list[j] = tmp;
+                    }
+                }
+            }
+            
+            var table_ = $("<table class=\"mt-5 table table-sm table-hover text-center table-border\"></table>");
+            table_.prepend("<tr style='background-color : rgb(253, 234, 123)'><td>순위</td><td>메뉴</td><td>언급횟수</td></tr>");
+            menu_list.forEach(function(item, index) {
+                if(item != 'y'){
+                    table_.append("<tr><td>"+(index+1)+"</td><td>"+item+"</td><td>"+data.menu[item]+"</td></tr>");
+                }
+            });  
+            $("#rank").html(table_);
+        }
+    </script>
+{% endblock %}
