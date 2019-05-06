@@ -1,0 +1,16 @@
+
+<html>
+<head>
+<body>  
+<input id="room" type="text">
+<button onclick="gotoRoom();">입장</button>
+<script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+<script>
+function gotoRoom(){
+    var room_num =  $("#room").val();
+    window.location.href = '/helper/'+ room_num + '/';
+}
+</script>
+</body>
+</head>
+</html>

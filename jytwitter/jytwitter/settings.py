@@ -27,10 +27,14 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
+# channels
+ASGI_APPLICATION = 'helper.routing.application'
 
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
+    'helper',
     'twitterAnal.apps.TwitteranalConfig',
     'django.contrib.admin',
     'django.contrib.auth',
